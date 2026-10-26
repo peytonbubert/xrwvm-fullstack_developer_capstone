@@ -1,12 +1,11 @@
 # Uncomment the required imports before adding the code
-
-from django.shortcuts import render
-#from django.http import HttpResponseRedirect, HttpResponse
+# from django.http import HttpResponseRedirect, HttpResponse
+# from django.shortcuts import render
+# from django.shortcuts import get_object_or_404, redirect
+# from django.contrib import messages
+# from datetime import datetime
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import logout
-from django.contrib import messages
-from datetime import datetime
 
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
@@ -31,7 +30,8 @@ def get_cars(request):
     car_models = CarModel.objects.select_related('car_make')
     cars = []
     for car_model in car_models:
-        cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
+        cars.append({"CarModel": car_model.name,
+					 "CarMake": car_model.car_make.name})
     return JsonResponse({"CarModels": cars})
 
 
@@ -51,30 +51,32 @@ def login_user(request):
         data = {"userName": username, "status": "Authenticated"}
     return JsonResponse(data)
 
+
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
     logout(request) # Terminate user session
-    data = {"userName":""} # Return empty username
+    data = {"userName": ""} # Return empty username
     return JsonResponse(data)
+
 
 # Create a `registration` view to handle sign up request
 @csrf_exempt
 def registration(request):
-    context = {}
-
+	context = {}
+	
 	# Load JSON data from the request body
-    data = json.loads(request.body)
-    username = data['userName']
-    password = data['password']
-    first_name = data['firstName']
+	data = json.loads(request.body)
+	username = data['userName']
+	password = data['password']
+	first_name = data['firstName']
     last_name = data['lastName']
     email = data['email']
     username_exist = False
     email_exist = False
     try:
-        # Check if user already exists
-        User.objects.get(username=username)
-        username_exist = True
+		# Check if user already exists
+    	User.objects.get(username=username)
+    	username_exist = True
     except:
         # If not, simply log this is a new user
         logger.debug("{} is new user".format(username))
@@ -95,6 +97,7 @@ def registration(request):
         data = {"userName": username,"error": "Already Registered"}
         return JsonResponse(data)
 
+
 # # Update the `get_dealerships` view to render the index page with
 # a list of dealerships
 # def get_dealerships(request):
@@ -113,17 +116,18 @@ def get_dealerships(request, state="All"):
 # def get_dealer_reviews(request,dealer_id):
 # ...
 def get_dealer_reviews(request, dealer_id):
-    # if dealer id has been provided
+	# if dealer id has been provided
     if (dealer_id):
-        endpoint = "/fetchReviews/dealer/"+str(dealer_id)
-        reviews = get_request(endpoint)
-        for review_detail in reviews:
-            response = analyze_review_sentiments(review_detail['review'])
-            print(response)
-            review_detail['sentiment'] = response['sentiment']
-        return JsonResponse({"status": 200,"reviews": reviews})
+    	endpoint = "/fetchReviews/dealer/"+str(dealer_id)
+    	reviews = get_request(endpoint)
+    	for review_detail in reviews:
+    	    response = analyze_review_sentiments(review_detail['review'])
+    	    print(response)
+    	    review_detail['sentiment'] = response['sentiment']
+    	return JsonResponse({"status": 200,"reviews": reviews})
     else:
         return JsonResponse({"status": 400,"message": "Bad Request"})
+
 
 # Create a `get_dealer_details` view to render the dealer details
 # def get_dealer_details(request, dealer_id):
