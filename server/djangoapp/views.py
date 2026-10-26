@@ -69,10 +69,10 @@ def registration(request):
 	username = data['userName']
 	password = data['password']
 	first_name = data['firstName']
-    last_name = data['lastName']
-    email = data['email']
-    username_exist = False
-    email_exist = False
+	last_name = data['lastName']
+	email = data['email']
+	username_exist = False
+	email_exist = False
     try:
 		# Check if user already exists
     	User.objects.get(username=username)
